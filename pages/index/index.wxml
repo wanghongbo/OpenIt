@@ -11,12 +11,14 @@
     <image class="paperimg" mode="aspectFit" src="https://res.wx.qq.com/wxdoc/dist/assets/img/0.4cb08bb4.jpg"></image>
   </view>
   <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+    <text>你愿意花</text>
+    <text class="motto">{{money}}元钱</text>
+    <text>打开它么？</text>
   </view>
   <view class="actioncontainer">
-    <button bindtap="showLoading" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">确    定</button>
-    <button bindtap="" style="width: 80%" type="warn" class="button">取    消</button>
+    <button bindtap="chooseGratuity" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">打  开  它</button>
+    <button bindtap="" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">不  打  开</button>
   </view>
-  <mp-actionSheet bindactiontap="selectDialog" show="{{showDialog}}" actions="{{groups}}" title="这是一个标题，可以为一行或者两行。">
+  <mp-actionSheet bindactiontap="selectGratuityDialog" show="{{showGratuityDialog}}" actions="{{gratuityGroups}}" title="你愿意支付多少钱消费？">
   </mp-actionSheet>
 </view>

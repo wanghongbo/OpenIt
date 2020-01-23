@@ -31,6 +31,10 @@
   margin-bottom: 60rpx;
 }
 
+.motto {
+  color: red;
+}
+
 .actioncontainer {
   width: 100%;
 }

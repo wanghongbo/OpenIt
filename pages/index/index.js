@@ -2,18 +2,21 @@
 //获取应用实例
 const app = getApp()
 
+var sum = 0
+var managerName = '王鸿博'
+
 Page({
   data: {
-    motto: 'Hello World',
+    money: 0,
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
-    showDialog: false,
-    groups: [
-      { text: '示例菜单', value: 1 },
-      { text: '示例菜单', value: 2 },
-      { text: '负向菜单', type: 'warn', value: 3 }
+    showGratuityDialog: false,
+    gratuityGroups: [
+      { text: '1块钱', value: 1 },
+      { text: '2块钱', value: 2 },
+      { text: '5块钱', value: 5 },
     ],
 
     actionDisable: false
@@ -54,43 +57,48 @@ Page({
       hasUserInfo: true
     })
   },
-  openDialog: function () {
-    this.setData({
-      showDialog: true
+  chooseGratuity: function(e) {
+    var _this = this
+    wx.showModal({
+      title: '你愿意支付一点儿小费么？支付小费有助于提高运气，小费越高，运气越好',
+      showCancel: true,
+      confirmText: '愿意支付',
+      cancelText: '直接打开',
+      success(res) {
+        if (res.confirm) {
+          _this.openGratuityDialog()
+        } else if (res.cancel) {
+          _this.showWaitingPay()
+        }
+      }
     })
   },
-  closeDialog: function () {
+  openGratuityDialog: function () {
     this.setData({
-      showDialog: false
+      showGratuityDialog: true
     })
   },
-  selectDialog(e) {
-    console.log(e)
-    this.closeDialog()
+  closeGratuityDialog: function () {
+    this.setData({
+      showGratuityDialog: false
+    })
   },
-  showLoading: function() {
+  selectGratuityDialog(e) {
+    this.closeGratuityDialog()
+    var gratuity = e.detail.value
+    sum = this.data.money + gratuity
+    console.log("----sum money: " + sum)
+    this.showConfimMoney()
+  },
+  showConfimMoney() {
     this.setData({
       actionDisable: true
     })
-    wx.showLoading({
-      title: '准备打开...',
-    })
-    var _this = this
-    setTimeout(function () {
-      _this.setData({
-        actionDisable: false
-      })
-      wx.hideLoading()
-      _this.showCost()
-    }, 1000)
-  },
-  showCost() {
     var _this = this
     wx.showModal({
-      title: '你需要支付以下费用才能打开纸团',
-      content: '3元',
+      title: '你总共需要支付' + sum + '元钱给' + managerName,
       showCancel: false,
-      confirmText: '确定',
+      confirmText: '去支付',
       success(res) {
         _this.showWaitingPay()
       }
@@ -103,5 +111,12 @@ Page({
     wx.showLoading({
       title: '等待支付...',
     })
+    var _this = this
+    setTimeout(function () {
+      _this.setData({
+        actionDisable: false
+      })
+      wx.hideLoading()
+    }, 1000)
   }
 })
