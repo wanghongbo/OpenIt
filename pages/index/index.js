@@ -2,26 +2,40 @@
 //获取应用实例
 const app = getApp()
 
+//获取数据库实例
+wx.cloud.init({
+  env: 'server-uko3f'
+})
+const db = wx.cloud.database()
+
+var payArr = [0.5, 1, 2, 3, 4, 5, 10]
+var gratuityArr = [
+  { text: '1块钱', value: 1 },
+  { text: '2块钱', value: 2 },
+  { text: '5块钱', value: 5 },
+]
+
 var sum = 0
 var managerName = '王鸿博'
+var animationDuration = 2000
+var interval = null
 
 Page({
   data: {
-    money: 0,
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
-    showGratuityDialog: false,
-    gratuityGroups: [
-      { text: '1块钱', value: 1 },
-      { text: '2块钱', value: 2 },
-      { text: '5块钱', value: 5 },
-    ],
+    paperSrc: '../resources/paper.png',
+    money: 0,
 
-    actionDisable: false
+    showGratuityDialog: false,
+    gratuityGroups: gratuityArr,
+
+    actionDisable: true
   },
   onLoad: function () {
+    console.log('onLoad')
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -49,6 +63,44 @@ Page({
       })
     }
   },
+  onReady() {
+    console.log('onReady')
+    this.animation = wx.createAnimation({
+      duration: animationDuration
+    })
+    this.setPayMoney()
+  },
+  setPayMoney() {
+    this.setRandomMoney()
+    this.rotate()
+    interval = setInterval(this.setRandomMoney, 100)
+  },
+  setRandomMoney() {
+    var m = 0
+    do {
+      var i = Math.floor(Math.random() * payArr.length)
+      m = payArr[i]
+    } while (m == this.data.money)
+    sum = m
+    this.setData({
+      money: m
+    })
+  },
+  rotate() {
+    var _this = this
+    this.animate('.papercontainer', [
+      { rotate: 0 },
+      { rotate: 720 },
+    ], animationDuration, function () {
+      this.clearAnimation('.papercontainer', function () {
+        console.log("----动画结束")
+        clearInterval(interval)
+        _this.setData({
+          actionDisable: false
+        })
+      })
+    }.bind(this))
+  },
   getUserInfo: function(e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
@@ -68,7 +120,7 @@ Page({
         if (res.confirm) {
           _this.openGratuityDialog()
         } else if (res.cancel) {
-          _this.showWaitingPay()
+          _this.showConfimMoney()
         }
       }
     })
@@ -111,12 +163,26 @@ Page({
     wx.showLoading({
       title: '等待支付...',
     })
-    var _this = this
-    setTimeout(function () {
-      _this.setData({
-        actionDisable: false
-      })
-      wx.hideLoading()
-    }, 1000)
+    db.collection('OpenIt').doc('0ae2515c-181d-4e14-8fae-ff9ca975e372').get({
+      success: function(res) {
+        console.log("------")
+        console.log(res.data)
+      }
+    })
+    // var _this = this
+    // setTimeout(function () {
+    //   _this.setData({
+    //     actionDisable: false
+    //   })
+    //   wx.hideLoading()
+    //   _this.showContinue()
+    // }, 1000)
+  },
+  showContinue() {
+    wx.showModal({
+      title: '再接再厉哟',
+      showCancel: false,
+      confirmText: '继续玩'
+    })
   }
 })

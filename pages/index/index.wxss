@@ -18,21 +18,27 @@
 
 .papercontainer {
   height: 100%;
-  background-color: red;
   margin: 60rpx 0;
 }
 
 .paperimg {
-  width: 480rpx;
-  height: 480rpx;
+  width: 400rpx;
+  height: 400rpx;
 }
 
-.usermotto {
+.tip {
   margin-bottom: 60rpx;
 }
 
-.motto {
+.moneycontainer {
+  width: 150rpx;
+  display: inline-block;
+  text-align: center;
+}
+
+.money {
   color: red;
+  width: 200rpx;
 }
 
 .actioncontainer {

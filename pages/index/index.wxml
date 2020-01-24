@@ -8,11 +8,13 @@
     </block>
   </view>
   <view class="papercontainer">
-    <image class="paperimg" mode="aspectFit" src="https://res.wx.qq.com/wxdoc/dist/assets/img/0.4cb08bb4.jpg"></image>
+    <image class="paperimg" mode="aspectFit" src="{{paperSrc}}"></image>
   </view>
-  <view class="usermotto">
+  <view class="tip">
     <text>你愿意花</text>
-    <text class="motto">{{money}}元钱</text>
+    <view class="moneycontainer">
+      <text class="money">{{money}}元钱</text>
+    </view>
     <text>打开它么？</text>
   </view>
   <view class="actioncontainer">
