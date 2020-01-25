@@ -2,7 +2,6 @@
 //获取应用实例
 const app = getApp()
 
-//获取数据库实例
 wx.cloud.init({
   env: 'server-uko3f'
 })
@@ -35,7 +34,7 @@ Page({
     actionDisable: true
   },
   onLoad: function () {
-    console.log('onLoad')
+    console.log('----onLoad')
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -64,7 +63,17 @@ Page({
     }
   },
   onReady() {
-    console.log('onReady')
+    console.log('----onReady')
+
+    //设置登录用户，仅允许一个普通用户和一个管理员登录
+    wx.cloud.callFunction({
+      name: 'getLoginUser',
+      success: function(res) {
+        console.log(res.result)
+      },
+      fail: console.error
+    })
+
     this.animation = wx.createAnimation({
       duration: animationDuration
     })

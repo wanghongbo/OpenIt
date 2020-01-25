@@ -1,0 +1,15 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="inputcontainer">
+    <label class="tip">密码</label>
+    <input id="input" class="input" type="number" maxlength="6" password="true" confirm-type="go" focus placeholder="请输入6位数登录密码" bindinput="input" bindconfirm="confirm" disabled="{{inputDisabled}}"/>
+  </view>
+  <button style="width: 80%" type="primary" disabled="{{actionDisabled}}" bindtap="confirm" loading="{{loading}}">开始游戏</button>
+</view>
