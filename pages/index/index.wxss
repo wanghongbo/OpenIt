@@ -19,6 +19,7 @@
 .papercontainer {
   height: 100%;
   margin: 60rpx 0;
+  z-index: -1;
 }
 
 .paperimg {

@@ -5,7 +5,6 @@ const app = getApp()
 wx.cloud.init({
   env: 'server-uko3f'
 })
-const db = wx.cloud.database()
 
 Page({
 
@@ -72,12 +71,49 @@ Page({
   },
 
   confirm: function(e) {
-    var pwd = this.data.pwd
-    console.log(pwd)
-    this.setData({
-      loading: true,
-      inputDisabled: true
-    })
+    if(!this.data.loading) {
+      var pwd = this.data.pwd
+      console.log("----密码：" + pwd)
+      this.setData({
+        loading: true,
+        inputDisabled: true
+      })
+      var _this = this
+      wx.cloud.callFunction({
+        name: 'login',
+        data: {
+          'pwd': pwd
+        },
+        success: function(res) {
+          // -1： 无权限 0：普通用户 1：管理员
+          var access = res.result.access
+          _this.setData({
+            loading: false,
+            inputDisabled: false
+          })
+          if (access == 0) {
+            wx.redirectTo({
+              url: '../index/index',
+            })
+          } else if (access == 1) {
+
+          } else {
+            wx.showToast({
+              title: '密码错误',
+              image: '../resources/error.png',
+              duration: 1000
+            })
+          }
+        },
+        fail: function (res) {
+          console.log(res)
+          _this.setData({
+            loading: false,
+            inputDisabled: false
+          })
+        }
+      })
+    }
   },
 
   /**

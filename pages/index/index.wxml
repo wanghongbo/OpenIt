@@ -3,7 +3,7 @@
   <view class="userinfo">
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
     <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </block>
   </view>
@@ -19,8 +19,8 @@
   </view>
   <view class="actioncontainer">
     <button bindtap="chooseGratuity" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">打  开  它</button>
-    <button bindtap="" style="width: 80%" type="default" class="button" disabled="{{actionDisable}}">不  打  开</button>
+    <button bindtap="doNotOpen" style="width: 80%" type="default" class="button" disabled="{{actionDisable}}">不  打  开</button>
   </view>
-  <mp-actionSheet bindactiontap="selectGratuityDialog" show="{{showGratuityDialog}}" actions="{{gratuityGroups}}" title="你愿意支付多少钱消费？">
+  <mp-actionSheet bindactiontap="selectGratuityDialog" show="{{showGratuityDialog}}" actions="{{gratuityGroups}}" title="你愿意支付多少钱消费？（当然是5块啦）">
   </mp-actionSheet>
 </view>

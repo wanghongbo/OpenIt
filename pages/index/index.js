@@ -14,7 +14,6 @@ var gratuityArr = [
   { text: '5块钱', value: 5 },
 ]
 
-var sum = 0
 var managerName = '王鸿博'
 var animationDuration = 2000
 var interval = null
@@ -27,6 +26,7 @@ Page({
 
     paperSrc: '../resources/paper.png',
     money: 0,
+    gratuity: 0,
 
     showGratuityDialog: false,
     gratuityGroups: gratuityArr,
@@ -64,24 +64,16 @@ Page({
   },
   onReady() {
     console.log('----onReady')
-
-    //设置登录用户，仅允许一个普通用户和一个管理员登录
-    wx.cloud.callFunction({
-      name: 'getLoginUser',
-      success: function(res) {
-        console.log(res.result)
-      },
-      fail: console.error
-    })
-
-    this.animation = wx.createAnimation({
-      duration: animationDuration
-    })
-    this.setPayMoney()
+    this.startGame()
   },
-  setPayMoney() {
+  startGame() {
     this.setRandomMoney()
-    this.rotate()
+    this.rotatePaper(function() {
+      clearInterval(interval)
+      _this.setData({
+        actionDisable: false
+      })
+    })
     interval = setInterval(this.setRandomMoney, 100)
   },
   setRandomMoney() {
@@ -90,12 +82,11 @@ Page({
       var i = Math.floor(Math.random() * payArr.length)
       m = payArr[i]
     } while (m == this.data.money)
-    sum = m
     this.setData({
       money: m
     })
   },
-  rotate() {
+  rotatePaper(completion) {
     var _this = this
     this.animate('.papercontainer', [
       { rotate: 0 },
@@ -103,10 +94,12 @@ Page({
     ], animationDuration, function () {
       this.clearAnimation('.papercontainer', function () {
         console.log("----动画结束")
-        clearInterval(interval)
-        _this.setData({
-          actionDisable: false
-        })
+        if (completion != null) {
+          clearInterval(interval)
+          _this.setData({
+            actionDisable: false
+          })
+        }
       })
     }.bind(this))
   },
@@ -121,7 +114,8 @@ Page({
   chooseGratuity: function(e) {
     var _this = this
     wx.showModal({
-      title: '你愿意支付一点儿小费么？支付小费有助于提高运气，小费越高，运气越好',
+      title: '你愿意支付一点儿小费么？支付小费有助于提高运气，小费越高，运气越好哦 ; )',
+      content: '祝客官开奖大吉大利',
       showCancel: true,
       confirmText: '愿意支付',
       cancelText: '直接打开',
@@ -147,7 +141,10 @@ Page({
   selectGratuityDialog(e) {
     this.closeGratuityDialog()
     var gratuity = e.detail.value
-    sum = this.data.money + gratuity
+    this.setData({
+      gratuity: gratuity
+    })
+    var sum = this.data.money + gratuity
     console.log("----sum money: " + sum)
     this.showConfimMoney()
   },
@@ -156,8 +153,10 @@ Page({
       actionDisable: true
     })
     var _this = this
+    var sum = this.data.money + this.data.gratuity
     wx.showModal({
       title: '你总共需要支付' + sum + '元钱给' + managerName,
+      content: '推荐使用微信红包哦',
       showCancel: false,
       confirmText: '去支付',
       success(res) {
@@ -172,10 +171,30 @@ Page({
     wx.showLoading({
       title: '等待支付...',
     })
-    db.collection('OpenIt').doc('0ae2515c-181d-4e14-8fae-ff9ca975e372').get({
+    var _this = this
+    db.collection('OpenIt_Record').add({
+      data: {
+        name: app.globalData.userInfo.nickName,
+        money: this.data.money,
+        gratuity: this.data.gratuity,
+        paid: false,
+        date: db.serverDate()
+      },
       success: function(res) {
-        console.log("------")
-        console.log(res.data)
+        var id = res._id
+        _this.repeatWaiting(id)
+      },
+      fail: function(res) {
+        wx.hideLoading()
+        wx.showModal({
+          title: '发生了错误',
+          content: '你的网络好像不稳定哦',
+          showCancel: false,
+          confirmText: '重新开始',
+          success: function(res) {
+            _this.startGame()
+          }
+        })
       }
     })
     // var _this = this
@@ -187,11 +206,47 @@ Page({
     //   _this.showContinue()
     // }, 1000)
   },
+  repeatWaiting(id) {
+    var _this = this
+    db.collection('OpenIt_Record').doc(id).get({
+      success: function(res) {
+        console.log(res.data.paid)
+        var paid = res.data.paid
+        if(paid) {
+          // 支付成功
+          wx.showLoading({
+            title: '支付成功',
+          })
+          setTimeout(function () {
+            wx.hideLoading()
+            _this.rotatePaper(null)
+          }, 1000)
+        } else {
+          setTimeout(function() {
+            _this.repeatWaiting(id)
+          }, 1000)
+        }
+      },
+      failed: function(res) {
+        setTimeout(function () {
+          _this.repeatWaiting(id)
+        }, 3000)
+      }
+    })
+  },
   showContinue() {
     wx.showModal({
       title: '再接再厉哟',
       showCancel: false,
       confirmText: '继续玩'
+    })
+  },
+  doNotOpen() {
+    wx.showModal({
+      title: '不打开，你玩个锤子？',
+      content: '(￣(●●)￣)',
+      showCancel: false,
+      confirmText: '打开它'
     })
   }
 })
