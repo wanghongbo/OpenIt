@@ -9,7 +9,7 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  var pwd = event.pwd
+  const pwd = event.pwd
   // -1： 无权限 0：普通用户 1：管理员
   var access = -1
   try {

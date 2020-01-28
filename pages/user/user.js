@@ -1,4 +1,4 @@
-//index.js
+//user.js
 //获取应用实例
 const app = getApp()
 
@@ -7,7 +7,7 @@ wx.cloud.init({
 })
 const db = wx.cloud.database()
 
-var payArr = [0.5, 1, 2, 3, 4, 5, 10]
+var payArr = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 var gratuityArr = [
   { text: '1块钱', value: 1 },
   { text: '2块钱', value: 2 },
@@ -24,7 +24,7 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
-    paperSrc: '../resources/paper.png',
+    paperSrc: '../resources/papers/paper.png',
     money: 0,
     gratuity: 0,
 
@@ -61,6 +61,14 @@ Page({
         }
       })
     }
+  },
+  getUserInfo: function (e) {
+    console.log(e)
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true
+    })
   },
   onReady() {
     console.log('----onReady')
@@ -102,14 +110,6 @@ Page({
         }
       })
     }.bind(this))
-  },
-  getUserInfo: function(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
   },
   chooseGratuity: function(e) {
     var _this = this
@@ -178,7 +178,8 @@ Page({
         money: this.data.money,
         gratuity: this.data.gratuity,
         paid: false,
-        date: db.serverDate()
+        date: db.serverDate(),
+        result: ''
       },
       success: function(res) {
         var id = res._id
@@ -197,14 +198,6 @@ Page({
         })
       }
     })
-    // var _this = this
-    // setTimeout(function () {
-    //   _this.setData({
-    //     actionDisable: false
-    //   })
-    //   wx.hideLoading()
-    //   _this.showContinue()
-    // }, 1000)
   },
   repeatWaiting(id) {
     var _this = this
@@ -234,13 +227,6 @@ Page({
       }
     })
   },
-  showContinue() {
-    wx.showModal({
-      title: '再接再厉哟',
-      showCancel: false,
-      confirmText: '继续玩'
-    })
-  },
   doNotOpen() {
     wx.showModal({
       title: '不打开，你玩个锤子？',
@@ -248,5 +234,8 @@ Page({
       showCancel: false,
       confirmText: '打开它'
     })
+  },
+  onUnload() {
+    clearInterval(interval)
   }
 })

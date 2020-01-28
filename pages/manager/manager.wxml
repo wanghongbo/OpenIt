@@ -1,0 +1,17 @@
+<!--pages/manager.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="papercontainer">
+    <image class="paperimg" mode="aspectFit" src="{{paperSrc}}"></image>
+  </view>
+  <text class="tip">玩家需要支付{{money + gratuity}}元钱</text>
+  <view class="actioncontainer">
+    <button bindtap="pay" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">收  到</button>
+  </view>
+</view>

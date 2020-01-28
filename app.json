@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/index/index",
+    "pages/manager/manager",
+    "pages/user/user",
     "pages/login/login"
   ],
   "window": {
