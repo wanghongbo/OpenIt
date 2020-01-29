@@ -23,8 +23,8 @@
 }
 
 .paperimg {
-  width: 400rpx;
-  height: 400rpx;
+  width: 460rpx;
+  height: 460rpx;
 }
 
 .tip {

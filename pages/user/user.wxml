@@ -11,15 +11,15 @@
     <image class="paperimg" mode="aspectFit" src="{{paperSrc}}"></image>
   </view>
   <view class="tip">
-    <text>你愿意花</text>
+    <text>{{frontTip}}</text>
     <view class="moneycontainer">
-      <text class="money">{{money}}元钱</text>
+      <text class="money">{{midTip}}</text>
     </view>
-    <text>打开它么？</text>
+    <text>{{backTip}}</text>
   </view>
   <view class="actioncontainer">
-    <button bindtap="chooseGratuity" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">打  开  它</button>
-    <button bindtap="doNotOpen" style="width: 80%" type="default" class="button" disabled="{{actionDisable}}">不  打  开</button>
+    <button bindtap="{{bindtap}}" style="width: 80%" type="primary" class="button" disabled="{{actionDisabled}}">{{buttonText}}</button>
+    <button bindtap="doNotOpen" style="width: 80%" type="default" class="button" disabled="{{actionDisabled}}" hidden="{{actionHidden}}">不  打  开</button>
   </view>
   <mp-actionSheet bindactiontap="selectGratuityDialog" show="{{showGratuityDialog}}" actions="{{gratuityGroups}}" title="你愿意支付多少钱消费？（当然是5块啦）">
   </mp-actionSheet>

@@ -23,13 +23,13 @@
 }
 
 .paperimg {
-  width: 400rpx;
-  height: 400rpx;
+  width: 460rpx;
+  height: 460rpx;
 }
 
 .tip {
   margin-bottom: 60rpx;
-  width: 300rpx;
+  width: 80%;
   text-align: center;
 }
 

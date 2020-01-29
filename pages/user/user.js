@@ -24,14 +24,20 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
-    paperSrc: '../resources/papers/paper.png',
+    paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/paper.png',
+    frontTip: '你愿意花',
+    midTip: '0元钱',
+    backTip: '打开它么？',
     money: 0,
     gratuity: 0,
 
     showGratuityDialog: false,
     gratuityGroups: gratuityArr,
 
-    actionDisable: true
+    bindtap: 'openIt',
+    buttonText: '打  开  它',
+    actionDisabled: true,
+    actionHidden: ''
   },
   onLoad: function () {
     console.log('----onLoad')
@@ -79,7 +85,7 @@ Page({
     this.rotatePaper(function() {
       clearInterval(interval)
       _this.setData({
-        actionDisable: false
+        actionDisabled: false
       })
     })
     interval = setInterval(this.setRandomMoney, 100)
@@ -91,7 +97,8 @@ Page({
       m = payArr[i]
     } while (m == this.data.money)
     this.setData({
-      money: m
+      money: m,
+      midTip: m + '元钱'
     })
   },
   rotatePaper(completion) {
@@ -105,13 +112,13 @@ Page({
         if (completion != null) {
           clearInterval(interval)
           _this.setData({
-            actionDisable: false
+            actionDisabled: false
           })
         }
       })
     }.bind(this))
   },
-  chooseGratuity: function(e) {
+  openIt: function(e) {
     var _this = this
     wx.showModal({
       title: '你愿意支付一点儿小费么？支付小费有助于提高运气，小费越高，运气越好哦 ; )',
@@ -150,7 +157,7 @@ Page({
   },
   showConfimMoney() {
     this.setData({
-      actionDisable: true
+      actionDisabled: true
     })
     var _this = this
     var sum = this.data.money + this.data.gratuity
@@ -166,10 +173,11 @@ Page({
   },
   showWaitingPay() {
     this.setData({
-      actionDisable: true
+      actionDisabled: true
     })
     wx.showLoading({
       title: '等待支付...',
+      mask: true
     })
     var _this = this
     db.collection('OpenIt_Record').add({
@@ -178,8 +186,10 @@ Page({
         money: this.data.money,
         gratuity: this.data.gratuity,
         paid: false,
+        valid: true,
         date: db.serverDate(),
-        result: ''
+
+        resultId: ''
       },
       success: function(res) {
         var id = res._id
@@ -187,52 +197,111 @@ Page({
       },
       fail: function(res) {
         wx.hideLoading()
-        wx.showModal({
-          title: '发生了错误',
-          content: '你的网络好像不稳定哦',
-          showCancel: false,
-          confirmText: '重新开始',
-          success: function(res) {
-            _this.startGame()
-          }
+        _this.showNetworkError(function() {
+          _this.startGame()
         })
       }
     })
   },
-  repeatWaiting(id) {
+  showNetworkError(completion) {
+    wx.showModal({
+      title: '发生了错误',
+      content: '你的网络好像不稳定',
+      showCancel: false,
+      confirmText: '重新开始',
+      success: function (res) {
+        completion()
+      }
+    })
+  },
+  repeatWaiting(recordId) {
     var _this = this
-    db.collection('OpenIt_Record').doc(id).get({
+    db.collection('OpenIt_Record').doc(recordId).get({
       success: function(res) {
         console.log(res.data.paid)
-        var paid = res.data.paid
+        const paid = res.data.paid
         if(paid) {
           // 支付成功
           wx.showLoading({
             title: '支付成功',
+            mask: true
           })
           setTimeout(function () {
-            wx.hideLoading()
-            _this.rotatePaper(null)
+            const resultId = res.data.resultId
+            console.log('----resultId: ' + resultId)
+            _this.openPaper(resultId)
           }, 1000)
         } else {
           setTimeout(function() {
-            _this.repeatWaiting(id)
+            _this.repeatWaiting(recordId)
           }, 1000)
         }
       },
-      failed: function(res) {
-        setTimeout(function () {
-          _this.repeatWaiting(id)
-        }, 3000)
+      fail: function(res) {
+        wx.hideLoading()
+        _this.showNetworkError(function(){
+          _this.startGame()
+        })
       }
     })
   },
+  openPaper(resultId) {
+    wx.showLoading({
+      title: '打开纸团...',
+      mask: true
+    })
+    var _this = this
+    db.collection('OpenIt_Result').doc(resultId).get({
+      success: function (res) {
+        const fileName = res.data.name
+        const bonus = res.data.bonus
+        _this.setData({
+          paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/' + fileName,
+          frontTip: '',
+          midTip: '奖励' + bonus + '元',
+          backTip: '',
+          bindtap: 'reset',
+          buttonText: '收到奖励，重开游戏',
+          actionDisabled: false,
+          actionHidden: 'hidden'
+        })
+        wx.hideLoading()
+      },
+      fail: function (res) {
+        _this.reset()
+      }
+    })
+  },
+  reset() {
+    wx.hideLoading()
+    this.setData({
+      paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/paper.png',
+      frontTip: '你愿意花',
+      midTip: '元钱',
+      backTip: '打开它么？',
+      money: 0,
+      gratuity: 0,
+
+      showGratuityDialog: false,
+      gratuityGroups: gratuityArr,
+
+      bindtap: 'openIt',
+      buttonText: '打  开  它',
+      actionDisabled: true,
+      actionHidden: '',
+    })
+    this.startGame()
+  },
   doNotOpen() {
+    var _this = this
     wx.showModal({
       title: '不打开，你玩个锤子？',
       content: '(￣(●●)￣)',
       showCancel: false,
-      confirmText: '打开它'
+      confirmText: '打开它',
+      success: function() {
+        _this.openIt()
+      }
     })
   },
   onUnload() {

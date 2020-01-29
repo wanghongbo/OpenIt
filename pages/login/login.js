@@ -84,9 +84,9 @@ Page({
         data: {
           'pwd': pwd
         },
-        success: function(res) {
+        success: function(data) {
           // -1： 无权限 0：普通用户 1：管理员
-          var access = res.result.access
+          var access = data.result.access
           _this.setData({
             loading: false,
             inputDisabled: false
@@ -105,8 +105,8 @@ Page({
             })
           }
         },
-        fail: function (res) {
-          console.log(res)
+        fail: function (data) {
+          console.log(data)
           _this.setData({
             loading: false,
             inputDisabled: false

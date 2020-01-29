@@ -10,8 +10,8 @@
   <view class="papercontainer">
     <image class="paperimg" mode="aspectFit" src="{{paperSrc}}"></image>
   </view>
-  <text class="tip">玩家需要支付{{money + gratuity}}元钱</text>
+  <text class="tip">{{tip}}</text>
   <view class="actioncontainer">
-    <button bindtap="pay" style="width: 80%" type="primary" class="button" disabled="{{actionDisable}}">收  到</button>
+    <button bindtap="{{bindtap}}" style="width: 80%" type="primary" class="button" disabled="{{actionDisabled}}">{{buttonText}}</button>
   </view>
 </view>
