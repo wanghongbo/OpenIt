@@ -69,7 +69,7 @@ Page({
   },
   start() {
     wx.showLoading({
-      title: '游戏中...',
+      title: '游戏中',
       mask: true
     })
     this.repeatWaiting()
@@ -110,8 +110,8 @@ Page({
   },
   openPaper() {
     wx.showLoading({
-      title: '打开纸团...',
-      mask: ture
+      title: '打开纸团',
+      mask: true
     })
     this.setData({
       actionDisabled: true

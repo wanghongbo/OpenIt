@@ -15,7 +15,7 @@ var gratuityArr = [
 ]
 
 var managerName = '王鸿博'
-var animationDuration = 2000
+var animationDuration = 1600
 var interval = null
 
 Page({
@@ -121,8 +121,8 @@ Page({
   openIt: function(e) {
     var _this = this
     wx.showModal({
-      title: '你愿意支付一点儿小费么？支付小费有助于提高运气，小费越高，运气越好哦 ; )',
-      content: '祝客官开奖大吉大利',
+      title: '你愿意支付一点儿小费么？',
+      content: '支付小费有助于提高运气，小费越高，运气越好哦 ; )',
       showCancel: true,
       confirmText: '愿意支付',
       cancelText: '直接打开',
@@ -130,7 +130,7 @@ Page({
         if (res.confirm) {
           _this.openGratuityDialog()
         } else if (res.cancel) {
-          _this.showConfimMoney()
+          _this.showConfirmMoney()
         }
       }
     })
@@ -153,30 +153,31 @@ Page({
     })
     var sum = this.data.money + gratuity
     console.log("----sum money: " + sum)
-    this.showConfimMoney()
+    this.showConfirmMoney()
   },
-  showConfimMoney() {
+  showConfirmMoney() {
     this.setData({
       actionDisabled: true
     })
-    var _this = this
-    var sum = this.data.money + this.data.gratuity
-    wx.showModal({
-      title: '你总共需要支付' + sum + '元钱给' + managerName,
-      content: '推荐使用微信红包哦',
-      showCancel: false,
-      confirmText: '去支付',
-      success(res) {
-        _this.showWaitingPay()
-      }
-    })
+    this.showWaitingPay()
+    // var _this = this
+    // var sum = this.data.money + this.data.gratuity
+    // wx.showModal({
+    //   title: '你总共需要支付' + sum + '元钱给' + managerName,
+    //   content: '推荐使用微信红包',
+    //   showCancel: false,
+    //   confirmText: '去支付',
+    //   success(res) {
+    //     _this.showWaitingPay()
+    //   }
+    // })
   },
   showWaitingPay() {
     this.setData({
       actionDisabled: true
     })
     wx.showLoading({
-      title: '等待支付...',
+      title: '等待支付' + (this.data.money + this.data.gratuity) + '元',
       mask: true
     })
     var _this = this
@@ -222,15 +223,34 @@ Page({
         const paid = res.data.paid
         if(paid) {
           // 支付成功
-          wx.showLoading({
-            title: '支付成功',
-            mask: true
-          })
-          setTimeout(function () {
-            const resultId = res.data.resultId
-            console.log('----resultId: ' + resultId)
-            _this.openPaper(resultId)
-          }, 1000)
+          // wx.hideLoading({
+          //   complete: function () {
+          //     wx.showToast({
+          //       title: '支付成功',
+          //       duration: 1000,
+          //       mask: true
+          //     })
+          //     setTimeout(function () {
+          //       const resultId = res.data.resultId
+          //       console.log('----resultId: ' + resultId)
+          //       _this.openPaper(resultId)
+          //     }, 1200)
+          //   }
+          // })
+
+          // wx.showLoading({
+          //   title: '支付成功',
+          //   mask: true
+          // })
+          // setTimeout(function () {
+          //   const resultId = res.data.resultId
+          //   console.log('----resultId: ' + resultId)
+          //   _this.openPaper(resultId)
+          // }, 1000)
+
+          const resultId = res.data.resultId
+          console.log('----resultId: ' + resultId)
+          _this.openPaper(resultId)
         } else {
           setTimeout(function() {
             _this.repeatWaiting(recordId)
@@ -247,7 +267,7 @@ Page({
   },
   openPaper(resultId) {
     wx.showLoading({
-      title: '打开纸团...',
+      title: '打开纸团',
       mask: true
     })
     var _this = this
@@ -261,7 +281,7 @@ Page({
           midTip: '奖励' + bonus + '元',
           backTip: '',
           bindtap: 'reset',
-          buttonText: '收到奖励，重开游戏',
+          buttonText: '收到奖励，重新开始',
           actionDisabled: false,
           actionHidden: 'hidden'
         })
@@ -273,6 +293,10 @@ Page({
     })
   },
   reset() {
+    //网络图片显示延迟，先让图片显示空
+    this.setData({
+      paperSrc: ''
+    })
     wx.hideLoading()
     this.setData({
       paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/paper.png',

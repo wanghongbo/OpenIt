@@ -12,11 +12,11 @@ exports.main = async (event, context) => {
 
   async function calculateResult(money, gratuity) {
     var times = 1
-    if (gratuity == 5 && (money + gratuity) >= 10) {
+    if (gratuity == 5 && (money + gratuity) >= 12) {
       times += 2
     } else if (gratuity == 5) {
       times += 1
-    } else if (money + gratuity >= 8) {
+    } else if (gratuity != 0 && (money + gratuity) >= 8) {
       times += 1
     }
     const res = await db.collection('OpenIt_Result').orderBy('bonus', 'asc').get()

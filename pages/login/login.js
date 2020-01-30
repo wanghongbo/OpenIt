@@ -93,10 +93,12 @@ Page({
           })
           if (access == 0) {
             wx.redirectTo({
-              url: '../index/index',
+              url: '../user/user',
             })
           } else if (access == 1) {
-
+            wx.redirectTo({
+              url: '../manager/manager',
+            })
           } else {
             wx.showToast({
               title: '密码错误',
