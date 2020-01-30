@@ -102,7 +102,7 @@ Page({
           } else {
             wx.showToast({
               title: '密码错误',
-              image: '../resources/error.png',
+              image: '../../resources/error.png',
               duration: 1000
             })
           }
