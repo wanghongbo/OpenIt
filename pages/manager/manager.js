@@ -181,6 +181,9 @@ Page({
     console.log('----onHide')
   },
   onShow() {
-    console.log('----show')
+    console.log('----onShow')
+  },
+  onResize() {
+    console.log('----onResize')
   }
 })
