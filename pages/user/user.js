@@ -1,4 +1,7 @@
 //user.js
+
+import { $wuxLoading } from '../components/loading/index'
+
 //获取应用实例
 const app = getApp()
 
@@ -41,6 +44,7 @@ Page({
   },
   onLoad: function () {
     console.log('----onLoad')
+    this.$wuxLoading = $wuxLoading()
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -176,9 +180,13 @@ Page({
     this.setData({
       actionDisabled: true
     })
-    wx.showLoading({
-      title: '等待支付' + (this.data.money + this.data.gratuity) + '元',
-      mask: true
+    // wx.showLoading({
+    //   title: '等待支付' + (this.data.money + this.data.gratuity) + '元',
+    //   mask: true
+    // })
+    this.$wuxLoading.show({
+        text: '等待支付' + (this.data.money + this.data.gratuity) + '元',
+        mask: true
     })
     var _this = this
     db.collection('OpenIt_Record').add({
@@ -197,7 +205,8 @@ Page({
         _this.repeatWaiting(id)
       },
       fail: function(res) {
-        wx.hideLoading()
+        // wx.hideLoading()
+        _this.$wuxLoading.hide()
         _this.showNetworkError(function() {
           _this.startGame()
         })
@@ -258,7 +267,8 @@ Page({
         }
       },
       fail: function(res) {
-        wx.hideLoading()
+        // wx.hideLoading()
+        _this.$wuxLoading.hide()
         _this.showNetworkError(function(){
           _this.startGame()
         })
@@ -266,9 +276,13 @@ Page({
     })
   },
   openPaper(resultId) {
-    wx.showLoading({
-      title: '打开纸团',
-      mask: true
+    // wx.showLoading({
+    //   title: '打开纸团',
+    //   mask: true
+    // })
+    this.$wuxLoading.show({
+        text: '打开纸团',
+        mask: false
     })
     var _this = this
     db.collection('OpenIt_Result').doc(resultId).get({
@@ -285,7 +299,8 @@ Page({
           actionDisabled: false,
           actionHidden: 'hidden'
         })
-        wx.hideLoading()
+        // wx.hideLoading()
+        _this.$wuxLoading.hide()
       },
       fail: function (res) {
         _this.reset()
@@ -297,7 +312,8 @@ Page({
     this.setData({
       paperSrc: ''
     })
-    wx.hideLoading()
+    // wx.hideLoading()
+    this.$wuxLoading.hide()
     this.setData({
       paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/paper.png',
       frontTip: '你愿意花',

@@ -1,4 +1,7 @@
 // pages/manager.js
+
+import { $wuxLoading } from '../components/loading/index'
+
 //获取应用实例
 const app = getApp()
 
@@ -28,6 +31,7 @@ Page({
   },
   onLoad: function () {
     console.log('----onLoad')
+    this.$wuxLoading = $wuxLoading()
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -68,9 +72,13 @@ Page({
     this.start()
   },
   start() {
-    wx.showLoading({
-      title: '游戏中',
-      mask: true
+    // wx.showLoading({
+    //   title: '游戏中',
+    //   mask: true
+    // })
+    this.$wuxLoading.show({
+        text: '游戏中',
+        mask: true
     })
     this.repeatWaiting()
   },
@@ -94,7 +102,8 @@ Page({
             tip: '玩家需要支付' + money + '+' + gratuity + '=' + (money + gratuity) + '元钱',
             actionDisabled: false
           })
-          wx.hideLoading();
+          // wx.hideLoading();
+          _this.$wuxLoading.hide()
         } else {
           setTimeout(function () {
             _this.repeatWaiting()
@@ -109,9 +118,13 @@ Page({
     })
   },
   openPaper() {
-    wx.showLoading({
-      title: '打开纸团',
-      mask: true
+    // wx.showLoading({
+    //   title: '打开纸团',
+    //   mask: true
+    // })
+    this.$wuxLoading.show({
+        text: '打开纸团',
+        mask: true
     })
     this.setData({
       actionDisabled: true
@@ -151,7 +164,8 @@ Page({
           buttonText: '支付完成，重新开始',
           actionDisabled: false
         })
-        wx.hideLoading()
+        // wx.hideLoading()
+        _this.$wuxLoading.hide()
       },
       fail: function(res) {
         _this.reset()
@@ -159,7 +173,8 @@ Page({
     })
   },
   reset() {
-    wx.hideLoading()
+    // wx.hideLoading()
+    this.$wuxLoading.hide()
     this.setData({
       paperSrc: 'cloud://server-uko3f.7365-server-uko3f-1301157543/papers/paper.png',
 

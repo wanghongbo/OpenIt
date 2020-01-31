@@ -1,0 +1,8 @@
+{
+    "components": [
+        "loading"
+    ],
+    "themes": {
+        "light": "white"
+    }
+}
